@@ -1,22 +1,32 @@
-public class Square{
-  private final int x, y;
-  private Colour occupier = Colour.NONE;
+public class Square implements Cloneable {
+  private final int r, c;
+  private Colour occupier;
 
-  public Square(int x, int y) {
-    this.x = x;
-    this.y = y;
+  public Square(int r, int c) {
+    this(r, c, Colour.NONE);
   }
 
-  public int getX() {
-    return x;
+  public Square(int r, int c, Colour colour) {
+    this.r = r;
+    this.c = c;
+    this.occupier = colour;
   }
 
-  public int getY() {
-    return y;
+  public int getR() {
+    return r;
+  }
+
+  public int getC() {
+    return c;
   }
 
   public Colour occupiedBy(){
     return occupier;
+  }
+
+  @Override
+  public Square clone() {
+    return new Square(r, c, occupier);
   }
 
   public void setOccupier(Colour colour){

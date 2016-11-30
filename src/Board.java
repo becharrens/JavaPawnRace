@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Board {
 //  private final char blackGap, whiteGap;
   private Square[][] chessBoard;
@@ -5,46 +7,81 @@ public class Board {
   public Board(char blackGap, char whiteGap) {
 //    this.blackGap = blackGap;
 //    this.whiteGap = whiteGap;
-    int bGap = (int) blackGap - 'a';
-    int wGap = (int) whiteGap - 'a';
+    int bGap = (int) blackGap - 'A';
+    int wGap = (int) whiteGap - 'A';
 
     chessBoard = new Square[8][8];
-    for (int i = 7; i >= 0; i--){
+    for (int i = 0; i < 8; i++){
       for (int j = 0; j < 8; j++){
-        chessBoard[7 - i][j] = new Square(j, i);
-        if (i == 6 && j != bGap) {
-          chessBoard[7 - i][j].setOccupier(Colour.BLACK);
-        } else if (i == 1 && j != wGap ) {
-          chessBoard[7 - i][j].setOccupier(Colour.WHITE);
+        chessBoard[i][j] = new Square(i, j);
+        if (i == 1 && j != bGap) {
+          chessBoard[i][j].setOccupier(Colour.BLACK);
+        } else if (i == 6 && j != wGap ) {
+          chessBoard[i][j].setOccupier(Colour.WHITE);
         }
       }
     }
   }
 
-  public Square getSquare(int x, int y){
-  //Pre: x, y "Cartesian coordinates", not standard array indexing
-    return chessBoard[7 - y][x];
+  //Pre: x, y standard array indexing
+  public Square getSquare(int r, int c){
+    return chessBoard[r][c];
   }
 
   public void applyMove(Move move){
-    int x1 = move.getFrom().getX();
-    int y1 = move.getFrom().getY();
-    int x2 = move.getTo().getX();
-    int y2 = move.getTo().getY();
-    Colour c = move.getFrom().occupiedBy();
-    chessBoard[7 - y1][x1].setOccupier(Colour.NONE);
-    chessBoard[7 - y2][x2].setOccupier(c);
-    if (move.isEnPassantCapture()) chessBoard[7 - y1][x2].setOccupier(Colour.NONE);
+    int r1 = move.getFrom().getR();
+    int c1 = move.getFrom().getC();
+    int r2 = move.getTo().getR();
+    int c2 = move.getTo().getC();
+    Colour colour = move.getFrom().occupiedBy();
+    chessBoard[r1][c1].setOccupier(Colour.NONE);
+    chessBoard[r2][c2].setOccupier(colour);
+    if (move.isEnPassantCapture()){
+      chessBoard[r1][c2].setOccupier(Colour.NONE);
+    }
   }
-//To Finish:
+
   public void unApplyMove(Move move){
-    int x1 = move.getFrom().getX();
-    int y1 = move.getFrom().getY();
-    int x2 = move.getTo().getX();
-    int y2 = move.getTo().getY();
-    Colour c1 = move.getFrom().occupiedBy();
-    chessBoard[7 - y1][x1].setOccupier(Colour.c1);
-    if (move.isCapture() || move.isEnPassantCapture())
-      chessBoard[7 - y2][x2].setOccupier(c);
+    int r1 = move.getFrom().getR();
+    int c1 = move.getFrom().getC();
+    int r2 = move.getTo().getR();
+    int c2 = move.getTo().getC();
+    Colour colour1 = move.getFrom().occupiedBy();
+    Colour colour2 = move.getTo().occupiedBy();
+    chessBoard[r1][c1].setOccupier(colour1);
+    if (move.isEnPassantCapture()){
+      chessBoard[r1][c2].setOccupier(Colour.opposite(colour1));
+    }
+    chessBoard[r2][c2].setOccupier(colour2);
+  }
+
+  public void display(){
+    String rowLabel = "    A B C D E F G H    ";
+    int len = rowLabel.length();
+    StringBuilder sb = new StringBuilder();
+    sb.append(rowLabel + '\n');
+    sb.append("\n");
+    for (int i = 0; i < 8; i++){
+      sb.append((8 - i) + "   ");
+      for (int j = 0; j < 8; j++){
+        sb.append(Colour.print(chessBoard[i][j].occupiedBy()) + " ");
+      }
+      sb.append("  " + (8 - i) + '\n');
+    }
+    sb.append("\n");
+    sb.append(rowLabel + '\n');
+    System.out.println(sb);
+  }
+
+  public ArrayList<Square> getAllPawns(Colour colour){
+    ArrayList<Square> pawns = new ArrayList<Square>();
+    Square square;
+    for (int i = 0; i < 8; i++){
+      for (int j = 0; j < 8; j++){
+        square = chessBoard[i][j].clone();
+        if (square.occupiedBy() == colour) pawns.add(square);
+      }
+    }
+    return pawns;
   }
 }

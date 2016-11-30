@@ -1,8 +1,13 @@
-import javax.sound.midi.Soundbank;
-
 public class Move {
   private final Square from, to;
   private final boolean isCapture, isEnPassantCapture;
+
+  public Move(){
+    this.from =  new Square(0, 0);
+    this.to = new Square(0, 0);
+    this.isCapture = false;
+    this.isEnPassantCapture = false;
+  }
 
   public Move(Square from, Square to, boolean isCapture, boolean isEnPassantCapture){
     this.from =  from;
@@ -31,13 +36,11 @@ public class Move {
     //Short Algebraic Notation
     StringBuilder sb = new StringBuilder();
     if (isCapture || isEnPassantCapture()) {
-      sb.append(columnLetter(from.getX()) + 'x');
+      sb.append(columnLetter(from.getC()) + "x");
     }
-    sb.append(columnLetter(to.getX()) + to.getY());
+    sb.append(columnLetter(to.getC()) + (8 - to.getR()));
     return sb.toString();
   }
 
-  private static char columnLetter(int y){
-    return (char) (y + 'a');
-  }
+  private static char columnLetter(int y){ return (char) (y + 'A'); }
 }
