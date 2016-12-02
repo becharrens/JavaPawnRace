@@ -1,4 +1,4 @@
-import java.net.CookiePolicy;
+import java.util.Random;
 
 public class PawnRace {
   public static void main(String[] args) {
@@ -13,35 +13,50 @@ public class PawnRace {
 
 
     //Complete
-    Game game = new Game();
+    Game game;
     System.out.println("Welcome to the Pawn Race program");
     String answer = yesNoInput("Will the Player 1 be human? (y/n)");
-    Colour colour = getColour();
-    if (answer == "y") {
-      HumanPlayer player1 = new HumanPlayer(game, colour);
-      answer = yesNoInput("Will the Player 2 be human? (y/n)");
-      if (answer == "y"){
-        HumanPlayer player2 = new HumanPlayer(game, Colour.opposite(colour));
-      } else {
-        ComputerPlayer player2 = new ComputerPlayer(game, Colour.opposite(colour));
-      }
+    Colour colour1 = getColour(), colour2 = Colour.opposite(colour1);
+    boolean isComp1, isComp2;
+    Board board;
+    isComp1 = answer == "y";
+    String answer = yesNoInput("Will the Player 2 be human? (y/n)");
+    isComp2 = answer == "y";
+    if (colour1 == Colour.BLACK) {
+      board = getBoard(isComp1);
     } else {
-      ComputerPlayer player1 = new ComputerPlayer(game, colour);
-      answer = yesNoInput("Will the Player 2 be human? (y/n)");
-      if (answer == "y"){
-        HumanPlayer player2 = new HumanPlayer(game, Colour.opposite(colour));
-      } else {
-        ComputerPlayer player2 = new ComputerPlayer(game, Colour.opposite(colour));
-      }
+      board = getBoard(isComp2);
     }
   }
 
-  private Colour getColour() {
-    String answer = yesNoInput("Will it be the White colour? (Whites go first)");
+  private static Colour getColour() {
+    String answer = yesNoInput("Will it be the White colour? (Whites go first, blacks decide gaps)");
     if (answer == "y"){
       return Colour.WHITE;
     } else {
       return Colour.BLACK;
+    }
+  }
+
+  public static int getGap(String colour) {
+    System.out.println("Where should the gap for the " + colour + " pawns be?");
+    String gapInput = IOUtil.readString().trim();
+    int gap;
+    while (true){
+      if (gapInput.length() > 0) {
+        gap = (int) gapInput.charAt(0) - 'A';
+        if (gap < 8 && gap >= 0) return gap;
+      }
+      System.out.println("Invalid input!!\nWhere should the gap for the " + colour + " pawns be?");
+      gapInput = IOUtil.readString().trim();
+    }
+  }
+
+  private static Board getBoard(boolean isComputer) {
+    if (isComputer) {
+      return new Board(new Random().nextInt(8), new Random().nextInt(8));
+    } else {
+      return new Board(getGap("Black"), getGap("White"));
     }
   }
 

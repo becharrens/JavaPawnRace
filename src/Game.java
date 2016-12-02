@@ -147,7 +147,7 @@ public class Game {
     Colour colour = chessBoard.getSquare(r, c).occupiedBy();
     for (int i = Math.max(0, r - 1); i < Math.min(7, r + 1); i++){
       for (int j = Math.max(0, c - 1); i < Math.min(7, c + 1); j++){
-        if (chessBoard.getSquare(i,j).occupiedBy() == colour) return false;
+        if (chessBoard.getSquare(i,j).occupiedBy() == colour && (r != i || c != j)) return false;
       }
     }
     return true;

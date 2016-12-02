@@ -4,26 +4,23 @@ public class Board {
 //  private final char blackGap, whiteGap;
   private Square[][] chessBoard;
 
-  public Board(char blackGap, char whiteGap) {
+  public Board(int blackGap, int whiteGap) {
 //    this.blackGap = blackGap;
 //    this.whiteGap = whiteGap;
-    int bGap = (int) blackGap - 'A';
-    int wGap = (int) whiteGap - 'A';
-
     chessBoard = new Square[8][8];
     for (int i = 0; i < 8; i++){
       for (int j = 0; j < 8; j++){
         chessBoard[i][j] = new Square(i, j);
-        if (i == 1 && j != bGap) {
+        if (i == 1 && j != blackGap) {
           chessBoard[i][j].setOccupier(Colour.BLACK);
-        } else if (i == 6 && j != wGap ) {
+        } else if (i == 6 && j != whiteGap ) {
           chessBoard[i][j].setOccupier(Colour.WHITE);
         }
       }
     }
   }
 
-  //Pre: x, y standard array indexing
+  //Pre: r, c standard array indexing
   public Square getSquare(int r, int c){
     return chessBoard[r][c];
   }
