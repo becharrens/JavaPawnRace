@@ -30,6 +30,9 @@ public class Game {
     movesArr[moveIdx] = move;
     moveIdx++;
     chessBoard.applyMove(move);
+    System.out.println(Colour.print(currentPlayer) + currentPlayer.toString().substring(1).toLowerCase() + "s " +
+                       "move " + move.getSAN() + ':');
+    chessBoard.display();
     currentPlayer = Colour.opposite(currentPlayer);
   }
 
@@ -73,34 +76,38 @@ public class Game {
     square = chessBoard.getSquare(r + advanceR, c).clone();
     if (square.occupiedBy() == Colour.NONE){
       pawnMoves.add(new Move(originSq, square, false, false));
-      square = chessBoard.getSquare(r + 2 * advanceR, c).clone();
-      if (r == startR && square.occupiedBy() == Colour.NONE){
-        pawnMoves.add(new Move(originSq, square, false, false));
+      if (r == startR){
+        square = chessBoard.getSquare(r + 2 * advanceR, c).clone();
+        if (square.occupiedBy() == Colour.NONE) {
+          pawnMoves.add(new Move(originSq, square, false, false));
+        }
       }
     }
     boolean isEPC = false;
-    if (c > 0) {
-      square = chessBoard.getSquare(r + advanceR, c - 1).clone();
-      if (square.occupiedBy() == Colour.opposite(colour)){
-        pawnMoves.add(new Move(originSq, square, true, false));
-      } else {
-        int toR = getLastMove().getTo().getR();
-        int fromR = getLastMove().getFrom().getR();
-        int toC = getLastMove().getTo().getC();
-        isEPC = Math.abs(toR - fromR) == 2 && (toR == r && toC == c - 1);
-        if (isEPC) pawnMoves.add(new Move(originSq, square, true, true));
+    if (getLastMove() != null) {
+      if (c > 0) {
+        square = chessBoard.getSquare(r + advanceR, c - 1).clone();
+        if (square.occupiedBy() == Colour.opposite(colour)) {
+          pawnMoves.add(new Move(originSq, square, true, false));
+        } else {
+          int toR = getLastMove().getTo().getR();
+          int fromR = getLastMove().getFrom().getR();
+          int toC = getLastMove().getTo().getC();
+          isEPC = Math.abs(toR - fromR) == 2 && (toR == r && toC == c - 1);
+          if (isEPC) pawnMoves.add(new Move(originSq, square, true, true));
+        }
       }
-    }
-    if (c < 7) {
-      square = chessBoard.getSquare(r + advanceR, c + 1).clone();
-      if (square.occupiedBy() == Colour.opposite(colour)){
-        pawnMoves.add(new Move(originSq, square, true, false));
-      } else {
-        int toR = getLastMove().getTo().getR();
-        int fromR = getLastMove().getFrom().getR();
-        int toC = getLastMove().getTo().getC();
-        isEPC = Math.abs(toR - fromR) == 2 && (toR == r && toC == c + 1);
-        if (isEPC) pawnMoves.add(new Move(originSq, square, true, true));
+      if (c < 7) {
+        square = chessBoard.getSquare(r + advanceR, c + 1).clone();
+        if (square.occupiedBy() == Colour.opposite(colour)) {
+          pawnMoves.add(new Move(originSq, square, true, false));
+        } else {
+          int toR = getLastMove().getTo().getR();
+          int fromR = getLastMove().getFrom().getR();
+          int toC = getLastMove().getTo().getC();
+          isEPC = Math.abs(toR - fromR) == 2 && (toR == r && toC == c + 1);
+          if (isEPC) pawnMoves.add(new Move(originSq, square, true, true));
+        }
       }
     }
     return pawnMoves;
@@ -161,6 +168,10 @@ public class Game {
       }
     }
     return null;
+  }
+
+  public void printBoard(){
+    chessBoard.display();
   }
 
 //  parseMove:

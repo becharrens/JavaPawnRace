@@ -38,7 +38,7 @@ public class Move {
     if (isCapture || isEnPassantCapture()) {
       sb.append(columnLetter(from.getC()) + "x");
     }
-    sb.append(columnLetter(to.getC()) + (8 - to.getR()));
+    sb.append(columnLetter(to.getC()) + "" + (8 - to.getR()));
     return sb.toString();
   }
 

@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.Random;
 
 public class PawnRace {
@@ -13,19 +14,36 @@ public class PawnRace {
 
 
     //Complete
-    Game game;
     System.out.println("Welcome to the Pawn Race program");
     String answer = yesNoInput("Will the Player 1 be human? (y/n)");
     Colour colour1 = getColour(), colour2 = Colour.opposite(colour1);
     boolean isComp1, isComp2;
     Board board;
-    isComp1 = answer == "y";
-    String answer = yesNoInput("Will the Player 2 be human? (y/n)");
-    isComp2 = answer == "y";
+    isComp1 = answer.equals("n");
+    answer = yesNoInput("Will the Player 2 be human? (y/n)");
+    isComp2 = answer.equals("n");
     if (colour1 == Colour.BLACK) {
       board = getBoard(isComp1);
     } else {
       board = getBoard(isComp2);
+    }
+    Game game = new Game(board);
+    Player player1 = new Player(game, colour1, isComp1);
+    Player player2 = new Player(game, colour2, isComp2);
+    HashMap<Colour, Player> players = new HashMap<Colour, Player>();
+    players.put(colour1, player1);
+    players.put(colour2, player2);
+    Colour key = Colour.WHITE;
+    board.display();
+    while (!game.isFinished()){
+      players.get(key).applyMove();
+      key = Colour.opposite(key);
+    }
+    Colour winner = game.getGameResult();
+    if (winner != Colour.NONE){
+      System.out.println(Colour.print(winner) + winner.toString().substring(1).toLowerCase() + "s WON!!!");
+    } else {
+      System.out.println("The game has ended in STALEMATE");
     }
   }
 
@@ -63,7 +81,7 @@ public class PawnRace {
   public static String yesNoInput(String question){
     System.out.println(question);
     String answer = IOUtil.readString().trim();
-    while (answer != "n" && answer != "y"){
+    while (!answer.equals("n") && !answer.equals("y")){
       System.out.println("Error: Answer must be yes(y) or no(n)");
       System.out.println(question);
       answer = IOUtil.readString();

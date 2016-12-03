@@ -6,6 +6,7 @@ public class Player {
   private Colour colour;
   private Colour opponent;
   private boolean computerPlayer;
+  private MoveTree moveTree;
 
   public Player(Game game, Colour colour, boolean computerPlayer) {
     //colour must be Black or White;
