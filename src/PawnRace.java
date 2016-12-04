@@ -28,8 +28,8 @@ public class PawnRace {
       board = getBoard(isComp2);
     }
     Game game = new Game(board);
-    Player player1 = new Player(game, colour1, isComp1);
-    Player player2 = new Player(game, colour2, isComp2);
+    Player player1 = new Player(game, colour1, isComp1, board);
+    Player player2 = new Player(game, colour2, isComp2, board);
     HashMap<Colour, Player> players = new HashMap<Colour, Player>();
     players.put(colour1, player1);
     players.put(colour2, player2);

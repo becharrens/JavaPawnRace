@@ -170,6 +170,10 @@ public class Game {
     return null;
   }
 
+  public Integer evaluateBoard(){
+    return null;
+  }
+
   public void printBoard(){
     chessBoard.display();
   }

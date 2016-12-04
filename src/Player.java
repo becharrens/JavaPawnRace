@@ -8,12 +8,13 @@ public class Player {
   private boolean computerPlayer;
   private MoveTree moveTree;
 
-  public Player(Game game, Colour colour, boolean computerPlayer) {
+  public Player(Game game, Colour colour, boolean computerPlayer, Board board) {
     //colour must be Black or White;
     this.game = game;
     this.colour = colour;
     this.opponent = Colour.opposite(colour);
     this.computerPlayer = computerPlayer;
+    //if (computerPlayer) moveTree = MoveTree.buildTree(board);
   }
 
   public Colour getColour() {
