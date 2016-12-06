@@ -35,8 +35,13 @@ public class PawnRace {
     players.put(colour2, player2);
     Colour key = Colour.WHITE;
     board.display();
+    MoveTree t = MoveTree.buildMoveTree(game, 6);
     while (!game.isFinished()){
       players.get(key).applyMove();
+      System.out.println(Colour.print(players.get(key).getColour()) +
+              players.get(key).getColour().toString().substring(1).toLowerCase() + "s " +
+              "move " + game.getLastMove().getSAN() + ':');
+      game.printBoard();
       key = Colour.opposite(key);
     }
     Colour winner = game.getGameResult();
@@ -49,7 +54,7 @@ public class PawnRace {
 
   private static Colour getColour() {
     String answer = yesNoInput("Will it be the White colour? (Whites go first, blacks decide gaps)");
-    if (answer == "y"){
+    if (answer.equals("y")){
       return Colour.WHITE;
     } else {
       return Colour.BLACK;

@@ -30,9 +30,7 @@ public class Game {
     movesArr[moveIdx] = move;
     moveIdx++;
     chessBoard.applyMove(move);
-    System.out.println(Colour.print(currentPlayer) + currentPlayer.toString().substring(1).toLowerCase() + "s " +
-                       "move " + move.getSAN() + ':');
-    chessBoard.display();
+    //chessBoard.display();
     currentPlayer = Colour.opposite(currentPlayer);
   }
 
@@ -137,14 +135,13 @@ public class Game {
   }
 
   public boolean isPassedPawn(int r, int c){
-    int diff;
     int advanceR = Colour.getAdvanceR(currentPlayer);
     int targetR = Colour.getTargetR(currentPlayer);
     Colour opponent = Colour.opposite(currentPlayer);
     for (int i = r + advanceR; i != targetR; i += advanceR){
-      diff = Math.abs(i - r);
-      for (int j = Math.max(0, c - diff); j < Math.min(7, c + diff); j++){
-        if (chessBoard.getSquare(i, j).occupiedBy() == opponent) return false;
+      for (int j = Math.max(0, c - 1); j < Math.min(7, c + 1); j++){
+        if (j != c && i != r + advanceR && chessBoard.getSquare(i, j).occupiedBy() == opponent ||
+            j == c && chessBoard.getSquare(i,j).occupiedBy() == Colour.NONE) return false;
       }
     }
     return true;
@@ -169,9 +166,38 @@ public class Game {
     }
     return null;
   }
-
-  public Integer evaluateBoard(){
-    return null;
+//
+//  public int evaluateBoard(){
+//    int eval;
+//    if (isFinished()){
+//      if (getGameResult() == ) {
+//        eval = Integer.MAX_VALUE;
+//        if ()
+//      }
+//    }
+  public int evaluateBoard(Colour maxPlayer, Colour minPlayer){
+    if (isFinished()){
+      Colour result = getGameResult();
+      if (result == maxPlayer){
+        return Integer.MAX_VALUE;
+      } else if (result == minPlayer){
+        return Integer.MIN_VALUE;
+      } else {
+        return 0;
+      }
+    }
+    return 0;
+//    Colour colour;
+//    for (int i = 0; i < 8; i++){
+//      for (int j = 0; j < 8; j++){
+//        colour = chessBoard.getSquare(i,j).occupiedBy();
+//        if (colour == maxPlayer) {
+//
+//        } else if (colour == minPlayer) {
+//
+//        }
+//      }
+//    }
   }
 
   public void printBoard(){

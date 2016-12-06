@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Player {
-  private Game game;
+  private static Game game;
   private Colour colour;
   private Colour opponent;
   private boolean computerPlayer;
