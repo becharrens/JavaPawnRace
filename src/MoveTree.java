@@ -8,7 +8,7 @@ public class MoveTree {
   private int boardEval;
   private Move move;
   private boolean isFinal;
-  private static Colour cpu, opp;
+  //private static Colour cpu, opp;
   //private static int BUILD_SEARCH_DEPTH = 6; // 3 moves ahead, 3 for each player
   private static Game game;
 
@@ -23,31 +23,32 @@ public class MoveTree {
     this.boardEval = boardEval;
   }
 
-  public MoveTree(ArrayList<MoveTree> moveTree, Move move, boolean searchMin) {
+  public MoveTree(ArrayList<MoveTree> moveTree, Move move) {
     this.move = move;
     this.isLeaf = false;
     this.moveTree = moveTree;
-    this.boardEval = minMax(moveTree, searchMin);
+    this.boardEval = minMax(moveTree);
   }
 
-  private static MoveTree buildTree(Colour player, Colour opponent, int depth, int maxDepth) {
-    boolean searchMin = opp == player;
+  private static MoveTree buildTree(int depth, int maxDepth) {
+    //boolean searchMin = opp == player;
+    Colour player = game.getCurrentPlayer();
     ArrayList<Move> moves = game.getValidMoves(player);
     ArrayList<MoveTree> subTrees = new ArrayList<MoveTree>();
     for (Move move : moves) {
       game.applyMove(move);
       if (!game.isFinished()) {
         if(depth < maxDepth) {
-          subTrees.add(buildTree(opponent, player, depth + 1, maxDepth));
+          subTrees.add(buildTree(depth + 1, maxDepth));
         } else {
-          subTrees.add(new MoveTree(getLeafs(opponent), move, searchMin));
+          subTrees.add(new MoveTree(getLeafs(Colour.opposite(player)), move));
         }
       } else {
-        subTrees.add(new MoveTree(move, true, game.evaluateBoard(cpu, opp))); //TODO
+        subTrees.add(new MoveTree(move, true, game.evaluateBoard())); //TODO
       }
       game.unApplyMove();
     }
-    return new MoveTree(subTrees, game.getLastMove(), searchMin);
+    return new MoveTree(subTrees, game.getLastMove());
   }
 
   //Need to update heuristic values as I exit recursion;
@@ -60,7 +61,7 @@ public class MoveTree {
         player = game.getCurrentPlayer();
         if (tree.moveTree.get(i).isLeaf){
           //extend by 2 moves, 1 from each player.
-          tree.moveTree.set(i, buildTree(player, Colour.opposite(player), 1, 1));
+          tree.moveTree.set(i, buildTree(1, 1));
         } else {
           extendTree(tree.moveTree.get(i));
         }
@@ -68,7 +69,7 @@ public class MoveTree {
       }
     }
 //    Inefficient. Try to implement minmax algorithm as you go in the recursion. Useful for alpha beta prawning
-    tree.boardEval = minMax(tree.moveTree, player == opp);
+    tree.boardEval = minMax(tree.moveTree);
   }
 
   public static void updateTree(MoveTree tree){
@@ -90,9 +91,7 @@ public class MoveTree {
 
   public static MoveTree buildMoveTree(Game game, int maxDepth){
     setGame(game);
-    cpu = game.getCurrentPlayer();
-    opp = Colour.opposite(cpu);
-    return buildTree(cpu, opp, 1, maxDepth);
+    return buildTree(1, maxDepth);
   }
 
   private static ArrayList<MoveTree> getLeafs(Colour player) {
@@ -102,15 +101,15 @@ public class MoveTree {
     for (Move move : moves) {
       game.applyMove(move);
       if (game.isFinished()) isFinal = true;
-      leaves.add(new MoveTree(move, isFinal, game.evaluateBoard(cpu, opp)));
+      leaves.add(new MoveTree(move, isFinal, game.evaluateBoard()));
       game.unApplyMove();
     }
     return leaves;
   }
 
-  private static int minMax(ArrayList<MoveTree> moveTree, boolean searchMin){
+  private static int minMax(ArrayList<MoveTree> moveTree){
     int boardEval;
-    if (searchMin){
+    if (game.getCurrentPlayer() == Colour.BLACK){
       boardEval = Integer.MAX_VALUE;
       for (int i = 0; i < moveTree.size(); i++){
         int eval = moveTree.get(i).boardEval;

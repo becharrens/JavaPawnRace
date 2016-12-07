@@ -35,7 +35,7 @@ public class PawnRace {
     players.put(colour2, player2);
     Colour key = Colour.WHITE;
     board.display();
-    MoveTree t = MoveTree.buildMoveTree(game, 6);
+    MoveTree t = MoveTree.buildMoveTree(game, 1);
     while (!game.isFinished()){
       players.get(key).applyMove();
       System.out.println(Colour.print(players.get(key).getColour()) +

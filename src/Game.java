@@ -134,10 +134,10 @@ public class Game {
     return moves;
   }
 
-  public boolean isPassedPawn(int r, int c){
-    int advanceR = Colour.getAdvanceR(currentPlayer);
-    int targetR = Colour.getTargetR(currentPlayer);
-    Colour opponent = Colour.opposite(currentPlayer);
+  public boolean isPassedPawn(Colour player, int r, int c){
+    int advanceR = Colour.getAdvanceR(player);
+    int targetR = Colour.getTargetR(player);
+    Colour opponent = Colour.opposite(player);
     for (int i = r + advanceR; i != targetR; i += advanceR){
       for (int j = Math.max(0, c - 1); j < Math.min(7, c + 1); j++){
         if (j != c && i != r + advanceR && chessBoard.getSquare(i, j).occupiedBy() == opponent ||
@@ -175,29 +175,32 @@ public class Game {
 //        if ()
 //      }
 //    }
-  public int evaluateBoard(Colour maxPlayer, Colour minPlayer){
+  public int evaluateBoard(){
     if (isFinished()){
       Colour result = getGameResult();
-      if (result == maxPlayer){
+      if (result == Colour.BLACK){
         return Integer.MAX_VALUE;
-      } else if (result == minPlayer){
+      } else if (result == Colour.WHITE){
         return Integer.MIN_VALUE;
       } else {
         return 0;
       }
     }
-    return 0;
-//    Colour colour;
-//    for (int i = 0; i < 8; i++){
-//      for (int j = 0; j < 8; j++){
-//        colour = chessBoard.getSquare(i,j).occupiedBy();
-//        if (colour == maxPlayer) {
-//
-//        } else if (colour == minPlayer) {
-//
-//        }
-//      }
-//    }
+
+    Colour colour;
+    int bTargetR = Colour.getTargetR(Colour.BLACK), wTargetR = Colour.getTargetR(Colour.WHITE);
+    int eval = 0;
+    for (int i = 0; i < 8; i++){
+      for (int j = 0; j < 8; j++){
+        colour = chessBoard.getSquare(i, j).occupiedBy();
+        if (colour == Colour.WHITE) {
+          if (isPassedPawn(colour, i, j)) eval += (wTargetR - j) * 10;
+        } else if (colour == Colour.BLACK) {
+          if (isPassedPawn(colour, i, j)) eval += (bTargetR - j) * 10;
+        }
+      }
+    }
+    return eval;
   }
 
   public void printBoard(){
