@@ -35,6 +35,12 @@ public class MoveTree {
     Colour player = game.getCurrentPlayer();
     ArrayList<Move> moves = game.getValidMoves(player);
     ArrayList<MoveTree> subTrees = new ArrayList<MoveTree>();
+    int boardEval;
+    if (player == Colour.BLACK){
+      boardEval = Integer.MIN_VALUE;
+    } else {
+      boardEval = Integer.MAX_VALUE;
+    }
     for (Move move : moves) {
       game.applyMove(move);
       if (!game.isFinished()) {
@@ -46,15 +52,27 @@ public class MoveTree {
       } else {
         subTrees.add(new MoveTree(move, true, game.evaluateBoard())); //TODO
       }
+
       game.unApplyMove();
+      if (player == Colour.BLACK){
+        boardEval = Math.max(boardEval, subTrees.get(subTrees.size() - 1).boardEval);
+      } else {
+        boardEval = Math.min(boardEval, subTrees.get(subTrees.size() - 1).boardEval);
+      }
     }
     return new MoveTree(subTrees, game.getLastMove());
   }
 
   //Need to update heuristic values as I exit recursion;
   //Returns an int, be careful with function call;
-  private static void extendTree(MoveTree tree){
-    Colour player = Colour.NONE;
+  public static void extendTree(MoveTree tree){
+    Colour player = game.getCurrentPlayer();
+    int boardEval;
+    if (player == Colour.BLACK){
+      boardEval = Integer.MIN_VALUE;
+    } else {
+      boardEval = Integer.MAX_VALUE;
+    }
     for (int i = 0; i < tree.moveTree.size(); i++){
       if (!tree.moveTree.get(i).isFinal){
         game.applyMove(tree.moveTree.get(i).move);
@@ -66,27 +84,34 @@ public class MoveTree {
           extendTree(tree.moveTree.get(i));
         }
         game.unApplyMove();
+        if (player == Colour.BLACK){
+          boardEval = Math.max(boardEval, tree.moveTree.get(i).boardEval);
+        } else {
+          boardEval = Math.min(boardEval, tree.moveTree.get(i).boardEval);
+        }
       }
     }
 //    Inefficient. Try to implement minmax algorithm as you go in the recursion. Useful for alpha beta prawning
-    tree.boardEval = minMax(tree.moveTree);
+    tree.boardEval = boardEval;
   }
 
-  public static void updateTree(MoveTree tree){
+  public static MoveTree applyMove(MoveTree tree){
     for (MoveTree subTree : tree.moveTree) {
-      if (subTree.move == tree.move) {
+      if (subTree.boardEval == tree.boardEval) {
         game.applyMove(subTree.move);
+        return subTree;
       }
     }
+    return null;
   }
 
-  public static void updateTree(Move move, MoveTree tree){
+  public static MoveTree updateTree(Move move, MoveTree tree){
     for (MoveTree subTree : tree.moveTree) {
       if (subTree.move == move) {
-        tree = subTree;
-        break;
+        return subTree;
       }
     }
+    return null;
   }
 
   public static MoveTree buildMoveTree(Game game, int maxDepth){

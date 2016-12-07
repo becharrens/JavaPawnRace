@@ -141,7 +141,7 @@ public class Game {
     for (int i = r + advanceR; i != targetR; i += advanceR){
       for (int j = Math.max(0, c - 1); j < Math.min(7, c + 1); j++){
         if (j != c && i != r + advanceR && chessBoard.getSquare(i, j).occupiedBy() == opponent ||
-            j == c && chessBoard.getSquare(i,j).occupiedBy() == Colour.NONE) return false;
+            j == c && chessBoard.getSquare(i,j).occupiedBy() != Colour.NONE) return false;
       }
     }
     return true;
@@ -194,9 +194,9 @@ public class Game {
       for (int j = 0; j < 8; j++){
         colour = chessBoard.getSquare(i, j).occupiedBy();
         if (colour == Colour.WHITE) {
-          if (isPassedPawn(colour, i, j)) eval += (wTargetR - j) * 10;
+          if (isPassedPawn(colour, i, j)) eval += (wTargetR - i) * 10;
         } else if (colour == Colour.BLACK) {
-          if (isPassedPawn(colour, i, j)) eval += (bTargetR - j) * 10;
+          if (isPassedPawn(colour, i, j)) eval += (bTargetR - i) * 10;
         }
       }
     }

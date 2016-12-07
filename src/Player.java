@@ -6,7 +6,7 @@ public class Player {
   private Colour colour;
   private Colour opponent;
   private boolean computerPlayer;
-  private MoveTree moveTree;
+  private static MoveTree moveTree;
 
   public Player(Game game, Colour colour, boolean computerPlayer, Board board) {
     //colour must be Black or White;
@@ -14,7 +14,7 @@ public class Player {
     this.colour = colour;
     this.opponent = Colour.opposite(colour);
     this.computerPlayer = computerPlayer;
-    //if (computerPlayer) moveTree = MoveTree.buildTree(board);
+    if (computerPlayer && moveTree == null) moveTree = MoveTree.buildMoveTree(game, 5);
   }
 
   public Colour getColour() {
@@ -35,8 +35,9 @@ public class Player {
 
   public void applyMove(){
     if (computerPlayer){
-      ArrayList<Move> moves = getAllValidMoves();
-      game.applyMove(moves.get(new Random().nextInt(moves.size())));
+//      ArrayList<Move> moves = getAllValidMoves();
+//      game.applyMove(moves.get(new Random().nextInt(moves.size())));
+      moveTree = MoveTree.applyMove(moveTree);
     } else {
       System.out.println("Enter your move: ");
       String san = IOUtil.readString().trim();
@@ -47,6 +48,11 @@ public class Player {
         move = game.parseMove(san);
       }
       game.applyMove(move);
+      if (moveTree != null) moveTree = MoveTree.updateTree(move, moveTree);
     }
+  }
+
+  public static void extendMoveTree(){
+    MoveTree.extendTree(moveTree);
   }
 }
