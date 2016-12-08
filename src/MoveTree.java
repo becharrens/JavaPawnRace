@@ -1,5 +1,8 @@
 //Pre: Generating moves requires that the root's game current player is computer and the last move
 //you will generate will be the opponent's
+
+//TODO: Colours get switched around at some point and computer doesn't move.
+
 import java.util.ArrayList;
 
 public class MoveTree {
@@ -23,14 +26,15 @@ public class MoveTree {
     this.boardEval = boardEval;
   }
 
-  public MoveTree(ArrayList<MoveTree> moveTree, Move move) {
+  public MoveTree(ArrayList<MoveTree> moveTree, Move move, int boardEval) {
     this.move = move;
     this.isLeaf = false;
     this.moveTree = moveTree;
-    this.boardEval = minMax(moveTree);
+    this.boardEval = boardEval;
   }
 
   private static MoveTree buildTree(int depth, int maxDepth) {
+    int a;
     //boolean searchMin = opp == player;
     Colour player = game.getCurrentPlayer();
     ArrayList<Move> moves = game.getValidMoves(player);
@@ -47,10 +51,10 @@ public class MoveTree {
         if(depth < maxDepth) {
           subTrees.add(buildTree(depth + 1, maxDepth));
         } else {
-          subTrees.add(new MoveTree(getLeafs(Colour.opposite(player)), move));
+          subTrees.add(getLeavesNode(Colour.opposite(player)));
         }
       } else {
-        subTrees.add(new MoveTree(move, true, game.evaluateBoard())); //TODO
+        subTrees.add(new MoveTree(move, true, game.evaluateBoard()));
       }
 
       game.unApplyMove();
@@ -59,8 +63,12 @@ public class MoveTree {
       } else {
         boardEval = Math.min(boardEval, subTrees.get(subTrees.size() - 1).boardEval);
       }
+
+      if (depth == 1) {
+        a = 1;
+      }
     }
-    return new MoveTree(subTrees, game.getLastMove());
+    return new MoveTree(subTrees, game.getLastMove(), boardEval);
   }
 
   //Need to update heuristic values as I exit recursion;
@@ -68,6 +76,7 @@ public class MoveTree {
   public static void extendTree(MoveTree tree){
     Colour player = game.getCurrentPlayer();
     int boardEval;
+    //Verify changing black -> max and white -> min works
     if (player == Colour.BLACK){
       boardEval = Integer.MIN_VALUE;
     } else {
@@ -107,7 +116,7 @@ public class MoveTree {
 
   public static MoveTree updateTree(Move move, MoveTree tree){
     for (MoveTree subTree : tree.moveTree) {
-      if (subTree.move == move) {
+      if (subTree.move.equals(move)) {
         return subTree;
       }
     }
@@ -119,7 +128,13 @@ public class MoveTree {
     return buildTree(1, maxDepth);
   }
 
-  private static ArrayList<MoveTree> getLeafs(Colour player) {
+  private static MoveTree getLeavesNode(Colour player) {
+    int boardEval;
+    if (player == Colour.BLACK){
+      boardEval = Integer.MIN_VALUE;
+    } else {
+      boardEval = Integer.MAX_VALUE;
+    }
     ArrayList<Move> moves = game.getValidMoves(player);
     ArrayList<MoveTree> leaves = new ArrayList<MoveTree>();
     boolean isFinal = false;
@@ -128,8 +143,13 @@ public class MoveTree {
       if (game.isFinished()) isFinal = true;
       leaves.add(new MoveTree(move, isFinal, game.evaluateBoard()));
       game.unApplyMove();
+      if (player == Colour.BLACK){
+        boardEval = Math.max(boardEval, leaves.get(leaves.size() - 1).boardEval);
+      } else {
+        boardEval = Math.min(boardEval, leaves.get(leaves.size() - 1).boardEval);
+      }
     }
-    return leaves;
+    return new MoveTree(leaves, game.getLastMove(), boardEval);
   }
 
   private static int minMax(ArrayList<MoveTree> moveTree){

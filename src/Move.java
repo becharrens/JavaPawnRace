@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Move {
   private final Square from, to;
   private final boolean isCapture, isEnPassantCapture;
@@ -43,4 +45,15 @@ public class Move {
   }
 
   private static char columnLetter(int y){ return (char) (y + 'A'); }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (this == null) return false;
+    if (this.getClass() != obj.getClass()) return false;
+    // Class name is Employ & have lastname
+    Move m = (Move) obj ;
+    return this.from.getC() ==  m.from.getC() && this.from.getR() ==  m.from.getR() &&
+            this.to.getC() ==  m.to.getC() && this.to.getR() ==  m.to.getR();
+  }
 }

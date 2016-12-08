@@ -188,15 +188,15 @@ public class Game {
     }
 
     Colour colour;
-    int bTargetR = Colour.getTargetR(Colour.BLACK), wTargetR = Colour.getTargetR(Colour.WHITE);
+    //int bTargetR = Colour.getTargetR(Colour.BLACK), wTargetR = Colour.getTargetR(Colour.WHITE);
     int eval = 0;
     for (int i = 0; i < 8; i++){
       for (int j = 0; j < 8; j++){
         colour = chessBoard.getSquare(i, j).occupiedBy();
         if (colour == Colour.WHITE) {
-          if (isPassedPawn(colour, i, j)) eval += (wTargetR - i) * 10;
+          if (isPassedPawn(colour, i, j)) eval += (i - 7) * 10;
         } else if (colour == Colour.BLACK) {
-          if (isPassedPawn(colour, i, j)) eval += (bTargetR - i) * 10;
+          if (isPassedPawn(colour, i, j)) eval += (i) * 10;
         }
       }
     }
