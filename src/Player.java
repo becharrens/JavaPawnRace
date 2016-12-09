@@ -14,7 +14,7 @@ public class Player {
     this.colour = colour;
     this.opponent = Colour.opposite(colour);
     this.computerPlayer = computerPlayer;
-    if (computerPlayer && moveTree == null) moveTree = MoveTree.buildMoveTree(game, 2);
+    if (computerPlayer && moveTree == null) moveTree = MoveTree.buildMoveTree(game, 5);
   }
 
   public Colour getColour() {

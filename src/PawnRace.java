@@ -45,7 +45,7 @@ public class PawnRace {
       game.printBoard();
       key = Colour.opposite(key);
       idx++;
-      if (idx % 2 == 0) Player.extendMoveTree();
+      if (idx % 2 == 0 && !game.isFinished()) Player.extendMoveTree();
     }
     Colour winner = game.getGameResult();
     if (winner != Colour.NONE){
@@ -80,7 +80,7 @@ public class PawnRace {
 
   private static Board getBoard(boolean isComputer) {
     if (isComputer) {
-      return new Board(new Random().nextInt(8), new Random().nextInt(8));
+      return new Board(0, 4);
     } else {
       return new Board(getGap("Black"), getGap("White"));
     }

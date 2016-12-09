@@ -85,7 +85,7 @@ public class MoveTree {
     for (int i = 0; i < tree.moveTree.size(); i++){
       if (!tree.moveTree.get(i).isFinal){
         game.applyMove(tree.moveTree.get(i).move);
-        player = game.getCurrentPlayer();
+        //player = game.getCurrentPlayer();
         if (tree.moveTree.get(i).isLeaf){
           //extend by 2 moves, 1 from each player.
           tree.moveTree.set(i, buildTree(1, 1));
@@ -98,6 +98,8 @@ public class MoveTree {
         } else {
           boardEval = Math.min(boardEval, tree.moveTree.get(i).boardEval);
         }
+      } else {
+        boardEval = tree.moveTree.get(i).boardEval;
       }
     }
 //    Inefficient. Try to implement minmax algorithm as you go in the recursion. Useful for alpha beta prawning
