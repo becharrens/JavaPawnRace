@@ -36,7 +36,7 @@ public class PawnRace {
     Colour key = Colour.WHITE;
     board.display();
     //MoveTree t = MoveTree.buildMoveTree(game, 1);
-    int idx = 0;
+//    int idx = 0;
     while (!game.isFinished()){
       players.get(key).applyMove();
       System.out.println(Colour.print(players.get(key).getColour()) +
@@ -44,8 +44,6 @@ public class PawnRace {
               "move " + game.getLastMove().getSAN() + ':');
       game.printBoard();
       key = Colour.opposite(key);
-      idx++;
-      if (idx % 2 == 0 && !game.isFinished()) Player.extendMoveTree();
     }
     Colour winner = game.getGameResult();
     if (winner != Colour.NONE){

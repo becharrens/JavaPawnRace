@@ -150,8 +150,10 @@ public class Game {
   public boolean isIsolatedPawn(int r, int c) {
     Colour colour = chessBoard.getSquare(r, c).occupiedBy();
     for (int i = Math.max(0, r - 1); i < Math.min(7, r + 1); i++){
-      for (int j = Math.max(0, c - 1); i < Math.min(7, c + 1); j++){
-        if (chessBoard.getSquare(i,j).occupiedBy() == colour && (r != i || c != j)) return false;
+      for (int j = Math.max(0, c - 1); j < Math.min(7, c + 1); j++){
+        if (chessBoard.getSquare(i,j).occupiedBy() == colour && (r != i || c != j)) {
+          return false;
+        }
       }
     }
     return true;
@@ -179,9 +181,9 @@ public class Game {
     if (isFinished()){
       Colour result = getGameResult();
       if (result == Colour.BLACK){
-        return Integer.MAX_VALUE;
+        return Integer.MIN_VALUE + 1;
       } else if (result == Colour.WHITE){
-        return Integer.MIN_VALUE;
+        return Integer.MAX_VALUE - 1;
       } else {
         return 0;
       }
@@ -190,13 +192,45 @@ public class Game {
     Colour colour;
     //int bTargetR = Colour.getTargetR(Colour.BLACK), wTargetR = Colour.getTargetR(Colour.WHITE);
     int eval = 0;
+    int advanceR;
     for (int i = 0; i < 8; i++){
       for (int j = 0; j < 8; j++){
         colour = chessBoard.getSquare(i, j).occupiedBy();
+        advanceR = Colour.getAdvanceR(colour);
         if (colour == Colour.WHITE) {
-          if (isPassedPawn(colour, i, j)) eval += (i - 7) * 10;
+          if (isPassedPawn(colour, i, j)) {
+            eval += i * 100;
+          } else if (currentPlayer == colour &&
+              chessBoard.getSquare(i, j + advanceR).occupiedBy() ==
+                  Colour.NONE) {
+            eval += i * 10;
+          } else if (chessBoard.getSquare(i, j + advanceR).occupiedBy() ==
+              Colour.opposite(colour) && isIsolatedPawn(i, j + advanceR)) {
+            eval += i;
+          } else if (isIsolatedPawn(i, j) && ((j > 0 &&
+              chessBoard.getSquare(i + advanceR, j - 1).occupiedBy() ==
+                  Colour.opposite(colour)) || (j < 7 &&
+              chessBoard.getSquare(i + advanceR, j + 1).occupiedBy() ==
+                  Colour.opposite(colour)))) {
+            eval += (i - 7) * 10;
+          }
         } else if (colour == Colour.BLACK) {
-          if (isPassedPawn(colour, i, j)) eval += (i) * 10;
+          if (isPassedPawn(colour, i, j)) {
+            eval += (i - 7) * 100;
+          } else if (currentPlayer == colour &&
+              chessBoard.getSquare(i + advanceR, j).occupiedBy() ==
+                  Colour.NONE) {
+            eval += (i - 7) * 10;
+          } else if (chessBoard.getSquare(i + advanceR, j).occupiedBy() ==
+              Colour.opposite(colour) && isIsolatedPawn(i  + advanceR, j)) {
+            eval += (i - 7);
+          } else if (isIsolatedPawn(i, j) && ((j > 0 &&
+              chessBoard.getSquare(i + advanceR, j - 1).occupiedBy() ==
+                  Colour.opposite(colour)) || (j < 7 &&
+              chessBoard.getSquare(i + advanceR, j + 1).occupiedBy() ==
+                  Colour.opposite(colour)))) {
+            eval += i * 10;
+          }
         }
       }
     }

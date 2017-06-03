@@ -1,60 +1,47 @@
-/*import java.util.ArrayList;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Tree {
-  private Node root;
-  private static final int INIT_DEPTH = 6;
+  private final Node tree;
 
-  public Tree(Game game){
-    root = buildTree(game, game.getCurrentPlayer(), Colour.opposite(game.getCurrentPlayer()), 1);
+  public Tree(Board board, int maxDepth) {
+    tree = createTree(board, maxDepth);
   }
 
-  public Tree(Integer moveEval, Move move) {
-    root = new Node();
-    root.moveEval = moveEval;
-    root.move = move;
+  private static Node createTree(Board board, int maxDepth) {
+
+    return null;
   }
 
-  public static class Node {
-    private Integer moveEval;
-    private Move move;
-    private ArrayList<Node> children;
+  private class Node {
+    private final Move move;
+    private final List<Node> children;
+    private int eval;
 
-    public void setMoveEval(Integer moveEval) {
-      this.moveEval = moveEval;
+    private Node(Move move) {
+      this.move = move;
+      this.children = new ArrayList<>();
     }
 
-    private Node buildTree(Game game, Colour player, Colour opponent, int depth) {
-      Integer evaluation;
-      Tree child;
-      ArrayList<Move> moves = game.getValidMoves(player);
-      ArrayList<Tree> subTrees = new ArrayList<Tree>();
-      ArrayList<Integer> evals = new ArrayList<Integer>();
-      for (Move move : moves) {
-        game.applyMove(move);
-        if (!game.isFinished()) {
-          if (depth < BUILD_SEARCH_DEPTH) {
-            //Go deeper
-          } else {
-            //
-          }
-        } else {
-          //TODO evaluation = game.evaluateBoard();
-          subTrees.add(new MoveTree(move, true, evaluation));
-        }
-      }
-      return new Tree();//TODO
+    public void addChild(Node child) {
+      children.add(child);
     }
-  }
 
-  private static ArrayList<Tree> getLeafs(Game game, Colour player){
-    ArrayList<Move> moves = game.getValidMoves(player);
-    ArrayList<Tree> leaves = new ArrayList<Tree>();
-    for (Move move : moves){
-      game.applyMove(move);
-      leaves.add(new Tree(game.evaluateBoard(), move));
-      game.unApplyMove();
+    public int numChildren() {
+      return children.size();
     }
-    return leaves;
+
+    public Node getChild(int childIdx) {
+      //Pre: childIdx in range
+      return children.get(childIdx);
+    }
+
+    public int getEval() {
+      return eval;
+    }
+
+    public void setEval(int eval) {
+      this.eval = eval;
+    }
   }
 }
-*/
